@@ -5,7 +5,6 @@ require('dotenv').config();
 const port = process.env.PORT || 5300;
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-
 // Middleware
 app.use(express.json());
 app.use(cors());
@@ -28,13 +27,30 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
 
-    
+    const usersCollection = client.db("unitedUpliftDB").collection("users");
+
+    app.get('/users', async(req, res) =>{
+        let query = {};
+
+        if(req.query?.email){
+            query = {email : req.query?.email}
+        }
+        const cursor = usersCollection.find(query);
+        const result = await cursor.toArray();
+        res.send(result)
+    })
+
+    app.post('/users', async(req, res) => {
+        const user = req.body;
+        const result = await usersCollection.insertOne(user);
+        res.send(result);
+    })
 
     // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
