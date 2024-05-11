@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 5300;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // Middleware
 app.use(express.json());
@@ -28,6 +28,19 @@ async function run() {
     // Send a ping to confirm a successful connection
 
     const usersCollection = client.db("unitedUpliftDB").collection("users");
+    const volunteersCollection = client.db("unitedUpliftDB").collection("volunteers");
+
+    app.get('/volunteers', async(req, res) => {
+        const result = await volunteersCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.get('/volunteers/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await volunteersCollection.find(query).toArray();
+        res.send(result);
+    })
 
     app.get('/users', async(req, res) =>{
         let query = {};
@@ -44,6 +57,12 @@ async function run() {
         const user = req.body;
         const result = await usersCollection.insertOne(user);
         res.send(result);
+    })
+
+    app.post('/volunteers', async(req, res) => {
+        const volunteer = req.body;
+        const result = await volunteersCollection.insertOne(volunteer)
+        res.send(result)
     })
 
     // await client.db("admin").command({ ping: 1 });
