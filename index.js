@@ -29,6 +29,7 @@ async function run() {
 
     const usersCollection = client.db("unitedUpliftDB").collection("users");
     const volunteersCollection = client.db("unitedUpliftDB").collection("volunteers");
+    const beVolunteersCollection = client.db("unitedUpliftDB").collection("bevolunteer");
 
     app.get('/volunteers', async(req, res) => {
         const result = await volunteersCollection.find().toArray();
@@ -38,7 +39,7 @@ async function run() {
     app.get('/volunteers/:id', async(req, res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)};
-        const result = await volunteersCollection.find(query).toArray();
+        const result = await volunteersCollection.findOne(query);
         res.send(result);
     })
 
@@ -53,6 +54,11 @@ async function run() {
         res.send(result)
     })
 
+    app.get('/bevolunteer', async(req, res) => {
+        const result = await beVolunteersCollection.find().toArray();
+        res.send(result);
+    })
+
     app.post('/users', async(req, res) => {
         const user = req.body;
         const result = await usersCollection.insertOne(user);
@@ -63,6 +69,12 @@ async function run() {
         const volunteer = req.body;
         const result = await volunteersCollection.insertOne(volunteer)
         res.send(result)
+    })
+
+    app.post('/bevolunteer', async(req, res) => {
+        const volunteer = req.body;
+        const result = await beVolunteersCollection.insertOne(volunteer);
+        res.send(result);
     })
 
     // await client.db("admin").command({ ping: 1 });
