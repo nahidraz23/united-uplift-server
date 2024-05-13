@@ -32,7 +32,11 @@ async function run() {
     const beVolunteersCollection = client.db("unitedUpliftDB").collection("bevolunteer");
 
     app.get('/volunteers', async(req, res) => {
-        const result = await volunteersCollection.find().toArray();
+        let query = {};
+        if(req.query?.email){
+            query = {email : req.query?.email}
+        }
+        const result = await volunteersCollection.find(query).toArray();
         res.send(result);
     })
 
@@ -45,7 +49,6 @@ async function run() {
 
     app.get('/users', async(req, res) =>{
         let query = {};
-
         if(req.query?.email){
             query = {email : req.query?.email}
         }
