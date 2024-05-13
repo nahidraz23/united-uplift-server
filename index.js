@@ -58,7 +58,12 @@ async function run() {
     })
 
     app.get('/bevolunteer', async(req, res) => {
-        const result = await beVolunteersCollection.find().toArray();
+        let query = {};
+
+        if(req.query?.volunteerEmail){
+            query = {volunteerEmail : req.query?.volunteerEmail}
+        }
+        const result = await beVolunteersCollection.find(query).toArray();
         res.send(result);
     })
 
@@ -77,6 +82,35 @@ async function run() {
     app.post('/bevolunteer', async(req, res) => {
         const volunteer = req.body;
         const result = await beVolunteersCollection.insertOne(volunteer);
+        res.send(result);
+    })
+
+    app.get('/updatepage/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await volunteersCollection.findOne(query);
+        res.send(result);
+    })
+
+    app.put('/volunteers/:id', async(req, res) => {
+        const id = req.params.id;
+        const filter = {_id : new ObjectId(id)};
+        const updatedVolunteer = req.body;
+
+        const volunteer = {
+            $set: {
+                thumbnail : updatedVolunteer.thumbnail,
+                title : updatedVolunteer.title,
+                category : updatedVolunteer.category,
+                location : updatedVolunteer.location,
+                noOfVolunteer : updatedVolunteer.noOfVolunteer,
+                deadline : updatedVolunteer.deadline,
+                email : updatedVolunteer.email,
+                name : updatedVolunteer.name,
+                description : updatedVolunteer.description
+            }
+        }
+        const result = await volunteersCollection.updateOne(filter, volunteer);
         res.send(result);
     })
 
