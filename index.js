@@ -118,12 +118,12 @@ async function run() {
     })
 
     // My volunteer post delete api
-    // app.delete('/bevolunteer/:id', async(req, res) => {
-    //     const id = req.params.id;
-    //     const query = {_id : new ObjectId(id)};
-    //     const result = await beVolunteersCollection.deleteOne(query);
-    //     res.send(result);
-    // })
+    app.delete('/volunteers/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = {_id : new ObjectId(id)};
+        const result = await volunteersCollection.deleteOne(query);
+        res.send(result);
+    })
 
     // Be volunteer request delete api
     app.delete('/bevolunteer/:id', async(req, res) => {
